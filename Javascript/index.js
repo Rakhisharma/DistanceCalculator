@@ -22,7 +22,7 @@ function getDistance() {
                     var distanceTo   = new google.maps.LatLng(Latitude1, Longitude1);
                     var dist = google.maps.geometry.spherical.computeDistanceBetween(distanceFrom, distanceTo);
                     dist *= 0.000621371192;
-                    alert(dist + "miles");
+                    alert(dist + ' ' +"miles");
                 } else {
                     alert('Please enter correct postal code');
                 }
