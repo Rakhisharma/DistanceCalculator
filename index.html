@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<style>
+	body {
+		padding: 250px;
+		background-color: rgb(128, 128, 252);
+	}
+	h3 {
+		text-align: left;
+	}
+</style>
+<body>
+		<div class="col-sm-12">
+			<h3><p>Enter the postal code to calculate the distance</h3></p><br><br>
+		</div>
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Postal Code 1</label>
+				<div class="col-sm-6">
+				<input class="form-control" id="postalCode1" placeholder="Postal Code">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Postal Code 2</label>
+				<div class="col-sm-6">
+				<input class="form-control" id="postalCode2" placeholder="Postal Code">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<br><button type="button" class="btn btn-outline-primary btn-lg" onclick="getDistance();">Get Distance</button>
+				</div>
+			</div>
+		</form>
+</body>
+<script>
+function getDistance() {
+var firstPostalcode = document.getElementById("postalCode1").value;
+// console.log(firstPostalcode)
+var secondPostalcode = document.getElementById("postalCode2").value;
+// console.log(secondPostalcode)
+var calculatedistance = {"postcodes" : [firstPostalcode,secondPostalcode]}
+	// console.log(calculatedistance);
+	$.ajax({  
+        type: "POST",  
+        url: "https://api.postcodes.io/postcodes",  
+        contentType: 'application/json',
+        data: JSON.stringify(calculatedistance),  //postcodes expect data in JSON format!
+        success: function(dataString) {  
+            console.log(dataString)
+			var Latitude0 = dataString.result[0].result.latitude;
+			var Longitude0 =  dataString.result[0].result.longitude;
+			var Latitude1 = dataString.result[1].result.latitude;
+			var Longitude1 =  dataString.result[1].result.longitude;
+			
+			if(Latitude0 && Longitude0 && Latitude1 && Longitude0 != null){
+				var distanceFrom = new google.maps.LatLng(Latitude0, Longitude0);
+				var distanceTo   = new google.maps.LatLng(Latitude1, Longitude1);
+				var dist = google.maps.geometry.spherical.computeDistanceBetween(distanceFrom, distanceTo);
+				dist *= 0.000621371192;
+				console.log(dist)
+			} else {
+				alert('Please enter correct postal code');
+			}
+        },
+        fail: function(error)
+        {
+            console.log("REQUEST FAIL!!")
+            console.log(error)
+        }  
+    });
+}
+
+
+</script>
+<script async defer src="https://maps.google.com/maps/api/js?libraries=geometry&key=AIzaSyA0qxT4N952C15Q6bnLI8uMNRGYpFhrQms"
+type="text/javascript"></script>
+</html>
